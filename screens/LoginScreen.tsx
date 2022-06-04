@@ -7,16 +7,19 @@ import {
   KeyboardAvoidingView,
   TextInput,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { auth } from "./firebase";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../App";
 
 // import {  } from "react-native-web";
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const LoginScreen: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -28,7 +31,7 @@ const LoginScreen = () => {
     return unsubscribe;
   }, []);
 
-  const handleSignUp = () => {
+  const handleSignUp = (): void => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredentials) => {
@@ -38,7 +41,7 @@ const LoginScreen = () => {
       .catch((error) => alert(error.message));
   };
 
-  const handleLogin = () => {
+  const handleLogin = (): void => {
     auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
@@ -84,13 +87,13 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: "1",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
 
   inputContainer: {
-    width: "80%",
+    width: Platform.OS === "web" ? "25%" : "80%",
   },
   input: {
     backgroundColor: "white",
@@ -100,7 +103,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   buttonContainer: {
-    width: "60%",
+    width: Platform.OS === "web" ? "15%" : "60%",
     justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
@@ -121,10 +124,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "700",
     fontSize: 16,
+    textAlign: "center",
   },
   buttonOutlineText: {
     color: "#0782F9",
     fontWeight: "700",
     fontSize: 16,
+    textAlign: "center",
   },
 });
