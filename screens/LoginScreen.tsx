@@ -10,8 +10,13 @@ import {
   Platform,
 } from "react-native";
 import { auth } from "./firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import { useAppContext } from "../context/appContext";
 
 // import {  } from "react-native-web";
 
@@ -19,36 +24,56 @@ const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  const { isSignedIn, userSignedIn } = useAppContext();
+
+  // const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        navigation.replace("Home");
-      }
-    });
+  // useEffect(() => {
+  //   const unsubscribe = getAuth(firebaseApp);
+  //   onAuthStateChanged(auth, user => {
+  //     // if (user) {
+  //     //   navigation.replace("Home");
+  //     // }
+  //   });
 
-    return unsubscribe;
-  }, []);
+  //   return unsubscribe;
+  // }, []);
 
   const handleSignUp = (): void => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        console.log("Registerd As: ", user.email);
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((res) => {
+        console.log("res Create user: ", res);
+        userSignedIn();
+        navigation.replace("Home");
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
+    // auth
+    //   .createUserWithEmailAndPassword(email, password)
+    //   .then((userCredentials) => {
+    //     const user = userCredentials.user;
+    //     console.log("Registerd As: ", user.email);
+    //   })
+    //   .catch((error) => alert(error.message));
   };
 
   const handleLogin = (): void => {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        console.log("Logged In As: ", user.email);
+    signInWithEmailAndPassword(auth, email, password)
+      .then((res) => {
+        console.log("res login user: ", res);
+        userSignedIn();
+        navigation.replace("Home");
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+      });
   };
 
   return (
