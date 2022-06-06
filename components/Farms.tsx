@@ -1,62 +1,39 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import { db } from "../screens/firebase";
-import {
-  collection,
-  getDocs,
-  doc,
-  onSnapshot,
-  query,
-} from "firebase/firestore";
+import { collection, onSnapshot, query } from "firebase/firestore";
 import FarmCard from "./FarmCard";
+import { useNavigation } from "@react-navigation/core";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../App";
+import { Button } from "react-native-paper";
 
 const Farms = () => {
   const [farmsData, setFarmsData] = useState([]);
 
-  const getData = async () => {
-    // const farmsCollection = collection(db, "Farms");
-    // const farmsSnapshot = await getDocs(farmsCollection);
-    // const farmsList = farmsSnapshot.docs.map((doc) => doc.data());
-    // setFarmsData(farmsList);
-    // console.log("farmsCollection: ", farmsCollection);
-    // console.log("farmsSnapshot: ", farmsSnapshot);
-    // console.log("farms list: ", farmsList);
-  };
-
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   useEffect(() => {
     const farmsCollection = query(collection(db, "Farms"));
 
-    // const unsubscribe = onSnapshot(collection(farmsCollection, (querysnapshot) => {
-    //   //   const farmsSnapshotData = doc.data();
-    //   const farms = [];
-    //   querysnapshot.forEach((doc) => {
-    //   farms.push(doc.data());
+    onSnapshot(farmsCollection, (querySnapshot) => {
+      setFarmsData(querySnapshot.docs.map((doc) => doc.data()));
 
-    //   console.log("farms in useeffect: ", farms);
-    // });
-
-    const unsubscribe = onSnapshot(farmsCollection, (querySnapshot) => {
-      const farms = [];
-      querySnapshot.forEach((doc) => {
-        farms.push(doc.data());
-      });
-      setFarmsData(farms);
-      console.log("farms fata in useffect???: ", farmsData);
+      console.log("farms in useffect???: ", farmsData);
     });
   }, []);
+
+  const navigateToAddFarm = () => {
+    navigation.navigate("AddFarm");
+  };
 
   return (
     <>
       <View style={styles.farmsContainer}>
-        <Text>Farms</Text>
-        {/* <Button title="Get Data" onPress={getData} /> */}
+        <View style={styles.buttonContainer}>
+          <Button style={styles.button} onPress={navigateToAddFarm}>
+            <Text style={styles.buttonText}>Add A Farm</Text>
+          </Button>
+        </View>
 
         <View>
           <FlatList
@@ -76,9 +53,29 @@ export default Farms;
 const styles = StyleSheet.create({
   farmsContainer: {
     marginBottom: 10,
-    borderColor: "green",
-    borderWidth: 2,
     justifyContent: "center",
     alignItems: "center",
+  },
+  buttonContainer:
+    Platform.OS === "web"
+      ? {
+          justifyContent: "center",
+          alignItems: "flex-end",
+          marginTop: 40,
+        }
+      : {
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 40,
+        },
+  button: {
+    backgroundColor: "#0782F9",
+    padding: 15,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });

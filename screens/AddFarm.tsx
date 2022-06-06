@@ -16,12 +16,7 @@ import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import * as ImagePicker from "expo-image-picker";
 import { Button, TextInput } from "react-native-paper";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytesResumable,
-  uploadString,
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
 const AddFarm: React.FC<{}> = () => {
@@ -34,6 +29,7 @@ const AddFarm: React.FC<{}> = () => {
       displayName: values.displayName,
       name: values.name,
       phone: values.phone,
+      openHours: values.openHours,
       image: values.image,
     });
   };
@@ -68,30 +64,36 @@ const AddFarm: React.FC<{}> = () => {
         }
       );
     }
-
-    // const response = await fetch(uri);
-    // const blob = response.blob();
-
-    // const ref = ref(storage().ref().child(`images/${imageName}`);
-    // return ref.put(blob);
   };
 
   return (
     <Formik
-      initialValues={{ displayName: "", name: "", phone: "", image: "" }}
-      onSubmit={(values) => {
-        addFarmToDb(values);
-        navigation.navigate("Home");
+      initialValues={{
+        displayName: "",
+        name: "",
+        phone: "",
+        image: "",
+        openHours: "",
+      }}
+      onSubmit={async (values) => {
+        await addFarmToDb(values);
+        await navigation.navigate("Home");
       }}
       validationSchema={Yup.object().shape({
-        displayName: Yup.string().required(
-          "Please, provide your farm display name!"
-        ),
-        name: Yup.string().required("Please, provide your farm name!"),
+        displayName: Yup.string()
+          .min(2, "Too Short!")
+          .max(50, "Too Long!")
+          .required("Please, provide your farm display name!"),
+        name: Yup.string()
+          .min(2, "Too Short!")
+          .max(50, "Too Long!")
+          .required("Please, provide your farm name!"),
+        openHours: Yup.string(),
         phone: Yup.string().matches(
           /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/,
           "Phone number is not valid"
         ),
+        image: Yup.string().required("Please, add an image!"),
       })}
     >
       {({
@@ -142,8 +144,19 @@ const AddFarm: React.FC<{}> = () => {
                 {errors.phone}
               </Text>
             )}
+            <TextInput
+              onChangeText={handleChange("openHours")}
+              onBlur={handleBlur("openHours")}
+              value={values.openHours}
+              style={styles.input}
+              placeholder="Open Hours"
+            />
+            {touched.openHours && errors.openHours && (
+              <Text style={{ fontSize: 12, color: "#FF0D10" }}>
+                {errors.openHours}
+              </Text>
+            )}
             <Button
-              icon="add-a-photo"
               mode="contained"
               style={styles.button}
               onPress={() => {

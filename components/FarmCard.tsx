@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Card, Button, Title, Paragraph } from "react-native-paper";
+import { Card, Title, Paragraph } from "react-native-paper";
 
 type Farm = {
   displayName: string;
@@ -23,9 +23,9 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }: FarmCardProps) => {
       <Card.Content>
         <Paragraph>{`Farm Name: ${farm.name}`}</Paragraph>
       </Card.Content>
-      <Card.Actions>
+      {/* <Card.Actions>
         <Button>Add To Favourites</Button>
-      </Card.Actions>
+      </Card.Actions> */}
     </Card>
   );
 };
@@ -45,5 +45,6 @@ const Styles = StyleSheet.create({
           justifyContent: "center",
           alignItems: "center",
           maxWidth: "90%",
+          margin: 20,
         },
 });

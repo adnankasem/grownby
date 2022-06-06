@@ -1,21 +1,13 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Platform,
-  KeyboardAvoidingView,
-} from "react-native";
+import { StyleSheet, Text, View, Platform } from "react-native";
 import React from "react";
 import { auth } from "./firebase";
 import { useNavigation } from "@react-navigation/core";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
-import AddFarm from "./AddFarm";
 import { signOut } from "firebase/auth";
 import { useAppContext } from "../context/appContext";
 import Farms from "../components/Farms";
-// import firestore from "@react-native-firebase/firestore";
+import { Button } from "react-native-paper";
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -31,27 +23,16 @@ const HomeScreen: React.FC = () => {
       .catch((error) => console.log(error.message));
   };
 
-  const navigateToAddFarm = () => {
-    navigation.navigate("AddFarm");
-  };
-
-  // const farmsCollection = firestore().collection("Farms");
-
-  // console.log("farms collection: ", farmsCollection);
-
   return (
     <View style={styles.container}>
-      <View style={styles.signOutContainer}>
-        {/* <Text>Email: {auth.currentUser?.email}</Text> */}
-        <TouchableOpacity onPress={handleSignout} style={styles.button}>
-          <Text style={styles.buttonText}>Sign out</Text>
-        </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <View style={styles.signOut}>
+          <Button onPress={handleSignout} style={styles.button}>
+            <Text style={styles.buttonText}>Sign out</Text>
+          </Button>
+        </View>
       </View>
-      <View style={styles.addFarmButtonContainer}>
-        <TouchableOpacity onPress={navigateToAddFarm} style={styles.button}>
-          <Text style={styles.buttonText}>Add A Farm</Text>
-        </TouchableOpacity>
-      </View>
+
       <Farms />
     </View>
   );
@@ -60,25 +41,18 @@ const HomeScreen: React.FC = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container:
+  container: Platform.OS === "web" ? {} : {},
+  buttonContainer:
     Platform.OS === "web"
       ? {
-          backgroundColor: "green",
+          // justifyContent: "center",
+          // alignItems: "flex-end",
+          // marginTop: 40,
         }
       : {
-          backgroundColor: "tan",
-        },
-  signOutContainer:
-    Platform.OS === "web"
-      ? {
-          justifyContent: "center",
-          alignItems: "flex-end",
-          marginTop: 40,
-        }
-      : {
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: 40,
+          // justifyContent: "center",
+          // alignItems: "center",
+          // marginTop: 40,
         },
   addFarmButtonContainer: Platform.OS === "web" ? {} : {},
   button: {
@@ -91,5 +65,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "700",
     fontSize: 16,
+  },
+  signOut: {
+    marginBottom: 50,
   },
 });

@@ -24,16 +24,15 @@ const LoginScreen: React.FC = () => {
 
   const { isSignedIn, userSignedIn } = useAppContext();
 
-  // const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
-
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
+    console.log("issignedin: ", isSignedIn);
     if (isSignedIn) {
       navigation.replace("Home");
       return;
     }
-  }, [isSignedIn]);
+  });
 
   const handleSignUp = (): void => {
     createUserWithEmailAndPassword(auth, email, password)
@@ -44,7 +43,7 @@ const LoginScreen: React.FC = () => {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+        alert(errorCode);
       });
   };
 
