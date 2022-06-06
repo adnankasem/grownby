@@ -41,7 +41,7 @@ const HomeScreen: React.FC = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: Platform.OS === "web" ? {} : {},
+  container: { backgroundColor: "grey" },
   buttonContainer:
     Platform.OS === "web"
       ? {

@@ -5,6 +5,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
 } from "react-native";
 import React from "react";
 import { Formik } from "formik";
@@ -12,11 +14,16 @@ import * as Yup from "yup";
 import { collection, addDoc } from "firebase/firestore";
 import { db, storage } from "./firebase";
 import { useNavigation } from "@react-navigation/core";
-import type { StackNavigationProp } from "@react-navigation/stack";
+import type { StackNavigationProp, Header } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import * as ImagePicker from "expo-image-picker";
 import { Button, TextInput } from "react-native-paper";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import {
+  getDownloadURL,
+  ref,
+  uploadString,
+  uploadBytes,
+} from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 
 const AddFarm: React.FC<{}> = () => {
@@ -37,21 +44,35 @@ const AddFarm: React.FC<{}> = () => {
   const imagePicker = async (handleChange) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+
+      base64: true,
     });
 
     if (result.cancelled === false) {
       console.log("image picker result", result);
 
-      const uniqueId = uuidv4();
+      // const uniqueId = uuidv4();
 
-      const storageRef = ref(storage, uniqueId);
+      const storageRef = ref(storage, "images");
       console.log("storageRef: ", storageRef);
 
-      const imageDataUrlString = result.uri;
-      uploadString(storageRef, imageDataUrlString, "data_url").then(
+      // if (Platform.OS === "web") {
+      const firstItem = result.base64.charAt(0);
+      let imageExt = "";
+      switch (firstItem) {
+        case "/":
+          imageExt = "jpeg";
+          break;
+        case "i":
+          imageExt = "png";
+          break;
+
+        default:
+          break;
+      }
+      const imageDataUrlString = `data:image/${imageExt};base64,${result.base64}`;
+      console.log(imageDataUrlString);
+      await uploadString(storageRef, imageDataUrlString, "data_url").then(
         (snapshot) => {
           console.log(
             "Uploaded a data_url string! here is snapshot: ",
@@ -63,6 +84,23 @@ const AddFarm: React.FC<{}> = () => {
           });
         }
       );
+      // } else {
+      //   // let file = File(result.uri)
+      //   // uploadBytes(storageRef, ).then((snapshot) => {
+      //   //   console.log('Uploaded a blob or file!');
+      //   // });
+
+      //   const file = result.uri;
+      //   // await uploadString(storageRef, file).then((snapshot) => {
+      //   //   console.log("Uploaded a raw string!", snapshot);
+
+      //   //   getDownloadURL(snapshot.ref).then((url) => {
+      //   //     console.log("OUR URLLL: ", url);
+      //   //     handleChange(url);
+      //   //   });
+      //   // });
+
+      // }
     }
   };
 
@@ -93,7 +131,7 @@ const AddFarm: React.FC<{}> = () => {
           /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/,
           "Phone number is not valid"
         ),
-        image: Yup.string().required("Please, add an image!"),
+        image: Yup.string(),
       })}
     >
       {({
@@ -106,66 +144,65 @@ const AddFarm: React.FC<{}> = () => {
         isValid,
         setFieldValue,
       }) => (
-        <KeyboardAvoidingView style={styles.container}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              onChangeText={handleChange("displayName")}
-              onBlur={handleBlur("displayName")}
-              value={values.displayName}
-              style={styles.input}
-              placeholder="* Farm Display Name"
-            />
-            {touched.displayName && errors.displayName && (
-              <Text style={{ fontSize: 12, color: "#FF0D10" }}>
-                {errors.displayName}
-              </Text>
-            )}
-            <TextInput
-              onChangeText={handleChange("name")}
-              onBlur={handleBlur("name")}
-              value={values.name}
-              style={styles.input}
-              placeholder="* Farm Name"
-            />
-            {touched.name && errors.name && (
-              <Text style={{ fontSize: 12, color: "#FF0D10" }}>
-                {errors.name}
-              </Text>
-            )}
-            <TextInput
-              onChangeText={handleChange("phone")}
-              onBlur={handleBlur("phone")}
-              value={values.phone}
-              style={styles.input}
-              placeholder="Phone Number"
-            />
-            {touched.phone && errors.phone && (
-              <Text style={{ fontSize: 12, color: "#FF0D10" }}>
-                {errors.phone}
-              </Text>
-            )}
-            <TextInput
-              onChangeText={handleChange("openHours")}
-              onBlur={handleBlur("openHours")}
-              value={values.openHours}
-              style={styles.input}
-              placeholder="Open Hours"
-            />
-            {touched.openHours && errors.openHours && (
-              <Text style={{ fontSize: 12, color: "#FF0D10" }}>
-                {errors.openHours}
-              </Text>
-            )}
-            <Button
-              mode="contained"
-              style={styles.button}
-              onPress={() => {
-                imagePicker(handleChange("image"));
-              }}
-            >
-              Pick an Image
-            </Button>
-          </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            onChangeText={handleChange("displayName")}
+            onBlur={handleBlur("displayName")}
+            value={values.displayName}
+            style={styles.input}
+            placeholder="* Farm Display Name"
+          />
+          {touched.displayName && errors.displayName && (
+            <Text style={{ fontSize: 12, color: "#FF0D10" }}>
+              {errors.displayName}
+            </Text>
+          )}
+          <TextInput
+            onChangeText={handleChange("name")}
+            onBlur={handleBlur("name")}
+            value={values.name}
+            style={styles.input}
+            placeholder="* Farm Name"
+          />
+          {touched.name && errors.name && (
+            <Text style={{ fontSize: 12, color: "#FF0D10" }}>
+              {errors.name}
+            </Text>
+          )}
+          <TextInput
+            onChangeText={handleChange("phone")}
+            onBlur={handleBlur("phone")}
+            value={values.phone}
+            style={styles.input}
+            placeholder="Phone Number"
+          />
+          {touched.phone && errors.phone && (
+            <Text style={{ fontSize: 12, color: "#FF0D10" }}>
+              {errors.phone}
+            </Text>
+          )}
+          <TextInput
+            onChangeText={handleChange("openHours")}
+            onBlur={handleBlur("openHours")}
+            value={values.openHours}
+            style={styles.input}
+            placeholder="Open Hours"
+          />
+          {touched.openHours && errors.openHours && (
+            <Text style={{ fontSize: 12, color: "#FF0D10" }}>
+              {errors.openHours}
+            </Text>
+          )}
+          <Button
+            mode="contained"
+            style={styles.button}
+            onPress={async () => {
+              await imagePicker(handleChange("image"));
+            }}
+          >
+            Pick an Image
+          </Button>
+
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               onPress={handleSubmit as any}
@@ -175,7 +212,7 @@ const AddFarm: React.FC<{}> = () => {
               <Text style={styles.buttonText}>Add Farm</Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
+        </View>
       )}
     </Formik>
   );
@@ -184,6 +221,10 @@ const AddFarm: React.FC<{}> = () => {
 export default AddFarm;
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    paddingVertical: 20,
+    marginBottom: 20,
+  },
   container: {
     flex: 6,
     justifyContent: "center",
