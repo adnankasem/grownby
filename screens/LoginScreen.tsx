@@ -18,8 +18,6 @@ import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import { useAppContext } from "../context/appContext";
 
-// import {  } from "react-native-web";
-
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -30,36 +28,24 @@ const LoginScreen: React.FC = () => {
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  // useEffect(() => {
-  //   const unsubscribe = getAuth(firebaseApp);
-  //   onAuthStateChanged(auth, user => {
-  //     // if (user) {
-  //     //   navigation.replace("Home");
-  //     // }
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
+  useEffect(() => {
+    if (isSignedIn) {
+      navigation.replace("Home");
+      return;
+    }
+  }, [isSignedIn]);
 
   const handleSignUp = (): void => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((res) => {
         console.log("res Create user: ", res);
         userSignedIn();
-        navigation.replace("Home");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
       });
-    // auth
-    //   .createUserWithEmailAndPassword(email, password)
-    //   .then((userCredentials) => {
-    //     const user = userCredentials.user;
-    //     console.log("Registerd As: ", user.email);
-    //   })
-    //   .catch((error) => alert(error.message));
   };
 
   const handleLogin = (): void => {
@@ -67,7 +53,6 @@ const LoginScreen: React.FC = () => {
       .then((res) => {
         console.log("res login user: ", res);
         userSignedIn();
-        navigation.replace("Home");
       })
       .catch((error) => {
         const errorCode = error.code;

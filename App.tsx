@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
+import AddFarm from "./screens/AddFarm";
 import { useAppContext } from "./context/appContext";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { AppProvider } from "./context/appContext";
@@ -12,17 +13,18 @@ import { AppProvider } from "./context/appContext";
 export type RootStackParamList = {
   Home: undefined;
   Login: undefined;
+  AddFarm: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const { isSignedIn } = useAppContext();
+  // const { isSignedIn } = useAppContext();
 
   // const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   // useEffect(() => {
-  //   navigation.replace("Home");
+  //   console.log("isSignedIn App: ", isSignedIn);
   // }, [isSignedIn]);
 
   return (
@@ -33,12 +35,9 @@ export default function App() {
             headerShown: Platform.OS === "web" ? false : true,
           }}
         >
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="Login"
-            component={LoginScreen}
-          />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="AddFarm" component={AddFarm} />
+          <Stack.Screen name="Login" component={LoginScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppProvider>

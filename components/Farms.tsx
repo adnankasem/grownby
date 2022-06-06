@@ -1,30 +1,81 @@
-import { StyleSheet, Text, View, Button } from "react-native";
-import React, { useEffect } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  ScrollView,
+  FlatList,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { db } from "../screens/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
 
 const Farms = () => {
-  const getData = async () => {
-    const farmsCollection = collection(db, "Farms");
-    const farmsSnapshot = await getDocs(farmsCollection);
-    const farmsList = farmsSnapshot.docs.map((doc) => doc.data());
-    //farms ist returns all the farms... map through it and render jsx
-    //form validation with formik? and schema validation with Yup
-    //
+  const [farmsData, setFarmsData] = useState([]);
 
-    console.log("farmsCollection: ", farmsCollection);
-    console.log("farmsSnapshot: ", farmsSnapshot);
-    console.log("farms list: ", farmsList);
+  const getData = async () => {
+    // const farmsCollection = collection(db, "Farms");
+    // const farmsSnapshot = await getDocs(farmsCollection);
+    // const farmsList = farmsSnapshot.docs.map((doc) => doc.data());
+    // setFarmsData(farmsList);
+    // console.log("farmsCollection: ", farmsCollection);
+    // console.log("farmsSnapshot: ", farmsSnapshot);
+    // console.log("farms list: ", farmsList);
   };
 
+  useEffect(() => {
+    const farmsCollection = query(collection(db, "Farms"));
+
+    // const unsubscribe = onSnapshot(collection(farmsCollection, (querysnapshot) => {
+    //   //   const farmsSnapshotData = doc.data();
+    //   const farms = [];
+    //   querysnapshot.forEach((doc) => {
+    //   farms.push(doc.data());
+
+    //   console.log("farms in useeffect: ", farms);
+    // });
+
+    const unsubscribe = onSnapshot(farmsCollection, (querySnapshot) => {
+      const farms = [];
+      querySnapshot.forEach((doc) => {
+        farms.push(doc.data());
+      });
+      setFarmsData(farms);
+      console.log("farms fata in useffect???: ", farmsData);
+    });
+  }, []);
+
   return (
-    <View>
-      <Text>Farms</Text>
-      <Button title="Get Data" onPress={getData} />
-    </View>
+    <>
+      <View style={styles.farmsContainer}>
+        <Text>Farms</Text>
+        {/* <Button title="Get Data" onPress={getData} /> */}
+
+        <View>
+          <FlatList
+            data={farmsData}
+            renderItem={({ item }) => (
+              <Text key={item.displayName}>{item.name}</Text>
+            )}
+          />
+        </View>
+      </View>
+    </>
   );
 };
 
 export default Farms;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  farmsContainer: {
+    marginBottom: 10,
+    borderColor: "green",
+    borderWidth: 2,
+  },
+});

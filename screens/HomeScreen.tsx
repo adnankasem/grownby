@@ -11,7 +11,7 @@ import { auth } from "./firebase";
 import { useNavigation } from "@react-navigation/core";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
-import AddFarm from "../components/AddFarm";
+import AddFarm from "./AddFarm";
 import { signOut } from "firebase/auth";
 import { useAppContext } from "../context/appContext";
 import Farms from "../components/Farms";
@@ -31,6 +31,10 @@ const HomeScreen: React.FC = () => {
       .catch((error) => console.log(error.message));
   };
 
+  const navigateToAddFarm = () => {
+    navigation.navigate("AddFarm");
+  };
+
   // const farmsCollection = firestore().collection("Farms");
 
   // console.log("farms collection: ", farmsCollection);
@@ -43,7 +47,11 @@ const HomeScreen: React.FC = () => {
           <Text style={styles.buttonText}>Sign out</Text>
         </TouchableOpacity>
       </View>
-      <AddFarm />
+      <View style={styles.addFarmButtonContainer}>
+        <TouchableOpacity onPress={navigateToAddFarm} style={styles.button}>
+          <Text style={styles.buttonText}>Add A Farm</Text>
+        </TouchableOpacity>
+      </View>
       <Farms />
     </View>
   );
@@ -52,22 +60,11 @@ const HomeScreen: React.FC = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  signOutContainer: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    width: Platform.OS === "web" ? "20%" : "60%",
-  },
+  container: {},
+  signOutContainer: {},
+  addFarmButtonContainer: Platform.OS === "web" ? {} : {},
   button: {
     backgroundColor: "#0782F9",
-
     padding: 15,
     borderRadius: 10,
   },
