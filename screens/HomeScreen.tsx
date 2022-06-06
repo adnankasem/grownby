@@ -60,8 +60,26 @@ const HomeScreen: React.FC = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {},
-  signOutContainer: {},
+  container:
+    Platform.OS === "web"
+      ? {
+          backgroundColor: "green",
+        }
+      : {
+          backgroundColor: "tan",
+        },
+  signOutContainer:
+    Platform.OS === "web"
+      ? {
+          justifyContent: "center",
+          alignItems: "flex-end",
+          marginTop: 40,
+        }
+      : {
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 40,
+        },
   addFarmButtonContainer: Platform.OS === "web" ? {} : {},
   button: {
     backgroundColor: "#0782F9",

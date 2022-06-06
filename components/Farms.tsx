@@ -15,6 +15,7 @@ import {
   onSnapshot,
   query,
 } from "firebase/firestore";
+import FarmCard from "./FarmCard";
 
 const Farms = () => {
   const [farmsData, setFarmsData] = useState([]);
@@ -61,7 +62,7 @@ const Farms = () => {
           <FlatList
             data={farmsData}
             renderItem={({ item }) => (
-              <Text key={item.displayName}>{item.name}</Text>
+              <FarmCard key={item.displayName} farm={item} />
             )}
           />
         </View>
@@ -77,5 +78,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderColor: "green",
     borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

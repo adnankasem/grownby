@@ -51,7 +51,6 @@ const LoginScreen: React.FC = () => {
   const handleLogin = (): void => {
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
-        console.log("res login user: ", res);
         userSignedIn();
       })
       .catch((error) => {

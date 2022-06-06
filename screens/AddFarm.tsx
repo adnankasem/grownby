@@ -3,8 +3,6 @@ import {
   Text,
   View,
   KeyboardAvoidingView,
-  TextInput,
-  Button,
   Platform,
   TouchableOpacity,
 } from "react-native";
@@ -12,10 +10,19 @@ import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, storage } from "./firebase";
 import { useNavigation } from "@react-navigation/core";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
+import * as ImagePicker from "expo-image-picker";
+import { Button, TextInput } from "react-native-paper";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+  uploadString,
+} from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 
 const AddFarm: React.FC<{}> = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -27,12 +34,51 @@ const AddFarm: React.FC<{}> = () => {
       displayName: values.displayName,
       name: values.name,
       phone: values.phone,
+      image: values.image,
     });
+  };
+
+  const imagePicker = async (handleChange) => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (result.cancelled === false) {
+      console.log("image picker result", result);
+
+      const uniqueId = uuidv4();
+
+      const storageRef = ref(storage, uniqueId);
+      console.log("storageRef: ", storageRef);
+
+      const imageDataUrlString = result.uri;
+      uploadString(storageRef, imageDataUrlString, "data_url").then(
+        (snapshot) => {
+          console.log(
+            "Uploaded a data_url string! here is snapshot: ",
+            snapshot
+          );
+          getDownloadURL(snapshot.ref).then((url) => {
+            console.log("OUR URLLL: ", url);
+            handleChange(url);
+          });
+        }
+      );
+    }
+
+    // const response = await fetch(uri);
+    // const blob = response.blob();
+
+    // const ref = ref(storage().ref().child(`images/${imageName}`);
+    // return ref.put(blob);
   };
 
   return (
     <Formik
-      initialValues={{ displayName: "", name: "", phone: "" }}
+      initialValues={{ displayName: "", name: "", phone: "", image: "" }}
       onSubmit={(values) => {
         addFarmToDb(values);
         navigation.navigate("Home");
@@ -56,6 +102,7 @@ const AddFarm: React.FC<{}> = () => {
         touched,
         errors,
         isValid,
+        setFieldValue,
       }) => (
         <KeyboardAvoidingView style={styles.container}>
           <View style={styles.inputContainer}>
@@ -95,6 +142,16 @@ const AddFarm: React.FC<{}> = () => {
                 {errors.phone}
               </Text>
             )}
+            <Button
+              icon="add-a-photo"
+              mode="contained"
+              style={styles.button}
+              onPress={() => {
+                imagePicker(handleChange("image"));
+              }}
+            >
+              Pick an Image
+            </Button>
           </View>
           <View style={styles.buttonContainer}>
             <TouchableOpacity

@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getStorage, ref } from "firebase/storage";
 
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -20,22 +21,12 @@ const firebaseConfig = {
   appId: "1:907665110404:web:486f75be5d569e0242d9d1",
 };
 
-// Initialize Firebase
-// let app;
-// if (firebase.apps.length === 0) {
-//   app = firebase.initializeApp(firebaseConfig);
-// } else {
-//   app = firebase.app();
-// }
-
-// const auth = firebase.auth();
-
-// export { auth };
-
 const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);
+
 // export const provider = new GoogleAuthProvider();
 
 // provider.setCustomParameters({prompt: 'select_account'})
