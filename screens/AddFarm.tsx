@@ -93,7 +93,7 @@ const AddFarm: React.FC<{}> = () => {
           /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/,
           "Phone number is not valid"
         ),
-        image: Yup.string().required("Please, add an image!"),
+        image: Yup.string(),
       })}
     >
       {({

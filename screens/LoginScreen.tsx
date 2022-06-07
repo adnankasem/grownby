@@ -13,10 +13,13 @@ import { auth } from "./firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
 } from "firebase/auth";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import { useAppContext } from "../context/appContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -25,6 +28,30 @@ const LoginScreen: React.FC = () => {
   const { isSignedIn, userSignedIn } = useAppContext();
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      storeData(user.uid);
+      // ...
+    } else {
+      // User is signed out
+      // ...
+      storeData("");
+    }
+  });
+
+  const storeData = async (value) => {
+    try {
+      const storageKey = await AsyncStorage.setItem("@auth_Key", value);
+      console.log("storageKey: ", storageKey);
+    } catch (e) {
+      // saving error
+      console.log("error in storeDAta", e);
+    }
+  };
 
   useEffect(() => {
     console.log("issignedin: ", isSignedIn);

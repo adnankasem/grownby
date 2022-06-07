@@ -12,7 +12,7 @@ import { Button } from "react-native-paper";
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  const { userSignedOut } = useAppContext();
+  const { isSignedIn, userSignedOut } = useAppContext();
 
   const handleSignout = (): void => {
     signOut(auth)

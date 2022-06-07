@@ -4,8 +4,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
 import AddFarm from "./screens/AddFarm";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { AppProvider } from "./context/appContext";
+import { useState } from "react";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -16,6 +18,27 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const [isAuth, setIsAuth] = useState<boolean>(false);
+
+  (async () => {
+    try {
+      const value = await AsyncStorage.getItem("@auth_Key");
+      if (value !== null) {
+        console.log("val is trueee");
+        console.log("value:::: ", value);
+
+        // value previously stored
+        setIsAuth(true);
+      } else {
+        console.log("val is nullll");
+
+        setIsAuth(false);
+      }
+    } catch (e) {
+      // error reading value
+      console.log("error in app asyncanonymouse: ", e);
+    }
+  })();
   return (
     <AppProvider>
       <NavigationContainer>
@@ -23,6 +46,7 @@ export default function App() {
           screenOptions={{
             headerShown: Platform.OS === "web" ? false : true,
           }}
+          initialRouteName={isAuth ? "Login" : "Home"}
         >
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
