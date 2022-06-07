@@ -7,8 +7,6 @@ import { useNavigation } from "@react-navigation/core";
 import type { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../App";
 import { Button } from "react-native-paper";
-import { ScrollView } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const Farms = () => {
   const [farmsData, setFarmsData] = useState([]);
@@ -30,14 +28,14 @@ const Farms = () => {
 
   return (
     <>
-      <ScrollView>
-        <View style={styles.farmsContainer}>
-          <View style={styles.buttonContainer}>
-            <Button style={styles.button} onPress={navigateToAddFarm}>
-              <Text style={styles.buttonText}>Add A Farm</Text>
-            </Button>
-          </View>
+      <View style={styles.farmsContainer}>
+        <View style={styles.buttonContainer}>
+          <Button style={styles.button} onPress={navigateToAddFarm}>
+            <Text style={styles.buttonText}>Add A Farm</Text>
+          </Button>
+        </View>
 
+        <View>
           <FlatList
             data={farmsData}
             renderItem={({ item }) => (
@@ -45,7 +43,7 @@ const Farms = () => {
             )}
           />
         </View>
-      </ScrollView>
+      </View>
     </>
   );
 };
@@ -53,9 +51,6 @@ const Farms = () => {
 export default Farms;
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    paddingVertical: 20,
-  },
   farmsContainer: {
     marginBottom: 10,
     justifyContent: "center",

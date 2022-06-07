@@ -1,7 +1,11 @@
 import { StyleSheet, Platform } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import LoginScreen from "./screens/LoginScreen";
+import HomeScreen from "./screens/HomeScreen";
+import AddFarm from "./screens/AddFarm";
 
 import { AppProvider } from "./context/appContext";
-import MainScreen from "./screens/MainScreen";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -9,10 +13,22 @@ export type RootStackParamList = {
   AddFarm: undefined;
 };
 
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
 export default function App() {
   return (
     <AppProvider>
-      <MainScreen />
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: Platform.OS === "web" ? false : true,
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="AddFarm" component={AddFarm} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </AppProvider>
   );
 }
@@ -20,9 +36,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "grey",
   },
 });
 
