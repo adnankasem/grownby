@@ -17,8 +17,6 @@ const Farms = () => {
 
     onSnapshot(farmsCollection, (querySnapshot) => {
       setFarmsData(querySnapshot.docs.map((doc) => doc.data()));
-
-      console.log("farms in useffect???: ", farmsData);
     });
   }, []);
 
@@ -34,7 +32,6 @@ const Farms = () => {
             <Text style={styles.buttonText}>Add A Farm</Text>
           </Button>
         </View>
-
         <View>
           <FlatList
             data={farmsData}

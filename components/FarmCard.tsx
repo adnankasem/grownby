@@ -7,6 +7,7 @@ type Farm = {
   name: string;
   phone: string;
   image: string;
+  openHours: string;
 };
 
 interface FarmCardProps {
@@ -17,15 +18,19 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm }: FarmCardProps) => {
   return (
     <Card style={Styles.container}>
       <Card.Content>
-        <Title>{`Display Name: ${farm.displayName}`}</Title>
+        <Title>{`Display Name: ${farm.displayName || "N/A"}`}</Title>
       </Card.Content>
       <Card.Cover source={{ uri: farm.image }} />
+
       <Card.Content>
-        <Paragraph>{`Farm Name: ${farm.name}`}</Paragraph>
+        <Paragraph>{`Farm Name: ${farm.name || "N/A"}`}</Paragraph>
       </Card.Content>
-      {/* <Card.Actions>
-        <Button>Add To Favourites</Button>
-      </Card.Actions> */}
+      <Card.Content>
+        <Paragraph>{`Phone: ${farm.phone || "N/A"}`}</Paragraph>
+      </Card.Content>
+      <Card.Content>
+        <Paragraph>{`Open Hours: ${farm.openHours || "N/A"}`}</Paragraph>
+      </Card.Content>
     </Card>
   );
 };

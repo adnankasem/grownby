@@ -17,12 +17,27 @@ describe("Login Page", () => {
     // so we must tell it to visit our website with the `cy.visit()` command.
     // Since we want to visit the same URL at the start of all our tests,
     // we include it in our beforeEach function so that it runs before each test
-    cy.visit("http://localhost:19006/");
+    cy.visit("http://localhost:19006");
+    cy.get('[aria-label="email"]').as("email");
+    cy.get('[data-testid="password-input"]').as("password");
+    cy.get('[role="button"]').as("loginbtn");
+    cy.get(`[aria-label="Register"]`).as("registerbtn");
   });
 
-  it("loads the login page", () => {
-    expect(true).to.equal(true);
+  it("loads the page", () => {
+    cy.get("img");
+    cy.contains(/login/i);
+    cy.contains(/register/i);
   });
+
+  it("logs in to the page", () => {
+    cy.get("@email").type("abc@test.com");
+    cy.get("@password").type("123123");
+    cy.get("@loginbtn").click();
+    cy.contains(/add a farm/i);
+  });
+
+  // it("")
 
   // it('displays two todo items by default', () => {
   //   // We use the `cy.get()` command to get all elements that match the selector.

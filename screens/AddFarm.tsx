@@ -6,7 +6,7 @@ import {
   Platform,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { collection, addDoc } from "firebase/firestore";
@@ -22,6 +22,8 @@ import { v4 as uuidv4 } from "uuid";
 const AddFarm: React.FC<{}> = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+  const [imageLoading, setImageLoading] = useState(false);
+
   const addFarmToDb = async (values) => {
     console.log("VALUES: ", values);
 
@@ -35,6 +37,7 @@ const AddFarm: React.FC<{}> = () => {
   };
 
   const imagePicker = async (handleChange) => {
+    setImageLoading(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -60,6 +63,7 @@ const AddFarm: React.FC<{}> = () => {
           getDownloadURL(snapshot.ref).then((url) => {
             console.log("OUR URLLL: ", url);
             handleChange(url);
+            setImageLoading(false);
           });
         }
       );

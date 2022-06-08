@@ -27,12 +27,15 @@ const HomeScreen: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <View style={styles.signOut}>
-          <Button onPress={handleSignout} style={styles.button}>
+          <Button
+            accessibilityLabel="signout"
+            onPress={handleSignout}
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Sign out</Text>
           </Button>
         </View>
       </View>
-
       <Farms />
     </View>
   );

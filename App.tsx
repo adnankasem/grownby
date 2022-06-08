@@ -1,13 +1,19 @@
 import { StyleSheet, Platform } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
 import AddFarm from "./screens/AddFarm";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useNavigation } from "@react-navigation/core";
+import {
+  StackNavigationProp,
+  createStackNavigator,
+} from "@react-navigation/stack";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { AppProvider } from "./context/appContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { firebase } from "@react-native-firebase/firestore";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -15,30 +21,48 @@ export type RootStackParamList = {
   AddFarm: undefined;
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [isAuth, setIsAuth] = useState<boolean>(false);
+  // const [storageKey, setStorageKey] = useState<string | null>()
 
-  (async () => {
-    try {
-      const value = await AsyncStorage.getItem("@auth_Key");
-      if (value !== null) {
-        console.log("val is trueee");
-        console.log("value:::: ", value);
+  // const checkStorage = async () => {
+  //   const key = await AsyncStorage.getItem("@auth_Key");
+  //   console.log("KEYYYY: ", key);
 
-        // value previously stored
-        setIsAuth(true);
-      } else {
-        console.log("val is nullll");
+  //   if (key === "string") {
+  //     setIsAuth(true);
+  //     return;
+  //   }
 
-        setIsAuth(false);
-      }
-    } catch (e) {
-      // error reading value
-      console.log("error in app asyncanonymouse: ", e);
-    }
-  })();
+  //   setIsAuth(false);
+  // };
+  // checkStorage();
+
+  // (async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem("@auth_Key");
+  //     if (value === "true") {
+  //       console.log("val is trueee");
+  //       console.log("value:::: ", value);
+
+  //       // value previously stored
+  //       setIsAuth(true);
+  //     } else if (value === "false") {
+  //       console.log("val is nullll");
+
+  //       setIsAuth(false);
+  //     }
+  //   } catch (e) {
+  //     // error reading value
+  //     console.log("error in app asyncanonymouse: ", e);
+  //   }
+  // })();
+
+  useEffect(() => {
+    console.log("ISAUTH: ", isAuth);
+  });
   return (
     <AppProvider>
       <NavigationContainer>
@@ -46,10 +70,10 @@ export default function App() {
           screenOptions={{
             headerShown: Platform.OS === "web" ? false : true,
           }}
-          initialRouteName={isAuth ? "Login" : "Home"}
         >
-          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+
           <Stack.Screen name="AddFarm" component={AddFarm} />
         </Stack.Navigator>
       </NavigationContainer>

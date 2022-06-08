@@ -1,6 +1,7 @@
 import React, { useReducer, useContext } from "react";
 import reducer from "./reducer";
 import { SIGNED_IN, SIGNED_OUT } from "./actions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AppContextProps {
   isSignedIn: boolean;
@@ -9,7 +10,8 @@ interface AppContextProps {
 }
 
 const initialState = {
-  isSignedIn: false,
+  token: AsyncStorage.getItem("@auth_Key"),
+  isSignedIn: AsyncStorage.getItem("@auth_Key") ? true : false,
 };
 
 const AppContext = React.createContext({} as AppContextProps);
