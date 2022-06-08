@@ -45,13 +45,13 @@ const AddFarm: React.FC<{}> = () => {
     if (result.cancelled === false) {
       console.log("image picker result", result);
 
-      const uniqueId = uuidv4();
+      const imgName = "img-" + new Date().getTime();
 
-      const storageRef = ref(storage, uniqueId);
+      const storageRef = ref(storage, imgName);
       console.log("storageRef: ", storageRef);
 
       const imageDataUrlString = result.uri;
-      uploadString(storageRef, imageDataUrlString, "data_url").then(
+      await uploadString(storageRef, imageDataUrlString, "data_url").then(
         (snapshot) => {
           console.log(
             "Uploaded a data_url string! here is snapshot: ",
